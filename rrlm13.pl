@@ -14,12 +14,12 @@ sat(Expression) :-
   write('\n').
 
 assignments_start :-
-  % retractall(assignments(_)),
+  retractall(assignments(_)),
   assertz(assignments(0)).
 
 assignments_increase :-
   assignments(N),
-  % retractall(assignments(_)),
+  retractall(assignments(_)),
   N2 is N + 1,
   assertz(assignments(N2)).
 
