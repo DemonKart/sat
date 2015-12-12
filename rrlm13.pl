@@ -1,7 +1,7 @@
 sat(Expression) :-
   assignments_start,
   get_time(Start),
-  sat_csf(Expression, Variables, Answer),
+  sat_csf(Expression, _, Answer),
   get_time(End),
   Total is (End - Start) / 100.0,
   assignments(N),
@@ -30,6 +30,7 @@ sat_csf(Expression, Variables, "Sat") :-
 sat_csf(_, _, "Unsat").
 
 process_terms([], _).
+
 process_terms([String | Tail], Variables) :-
   string_to_list(String, L),
   evaluate_term(L, Variables),
@@ -41,22 +42,32 @@ evaluate_term([Character | Tail], Variables) :-
   split_string(String, "#", ")", L),
   evaluate_unions(L, Variables).
 
-evaluate_term([X, Atom | _], Variables) :-
+evaluate_term([X, Atom | Tail], Variables) :-
   X is 120,
   Atom > 47,
   Atom < 58,
-  Index is Atom - 48,
+  get_atom_index([Atom | Tail], Index, _),
   nth0(Index, Variables, true),
   assignments_increase.
 
-evaluate_term([Not, X, Atom | _], Variables) :-
+evaluate_term([Not, X, Atom | Tail], Variables) :-
   Not is 126,
   X is 120,
   Atom > 47,
   Atom < 58,
-  Index is Atom - 48,
+  get_atom_index([Atom | Tail], Index, _),
   nth0(Index, Variables, false),
   assignments_increase.
+
+get_atom_index([], Index, Base) :-
+  Index is 0, Base is 1.
+
+get_atom_index([Atom | Tail], Index, Base) :-
+  Atom > 47,
+  Atom < 58,
+  get_atom_index(Tail, Index2, Base2),
+  Index is Index2 + (Atom - 48) * Base2,
+  Base is Base2 * 10.
 
 evaluate_unions([], _) :-
   fail.
