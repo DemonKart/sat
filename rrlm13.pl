@@ -39,7 +39,7 @@ process_terms([String | Tail], Variables) :-
 evaluate_term([Character | Tail], Variables) :-
   Character is 40,
   string_to_list(String, Tail),
-  split_string(String, "#", ")", L),
+  split_string(String, "#", ") ", L),
   evaluate_unions(L, Variables).
 
 evaluate_term([X, Atom | Tail], Variables) :-
